@@ -1,4 +1,6 @@
-# R-Skript für das PUNO-Forschungsseminar
+![](https://img.shields.io/github/license/DominikVogel/r-teaching-script.svg)
+
+# Skript zur Einführung in die Datenanalyse mit R
 
 In diesem Repository stelle ich die Skripte zur Verfügung, die ich nutze, um meinen Studierenden die Datenanalyse mit ``R`` Näher zu bringen. Ich nutze diese Skripte in meinem Forschungsseminar im Master ["Interdisziplinäre Public und Nonprofit Studien"](https://www.wiso.uni-hamburg.de/studienbuero-sozialoekonomie/studiengaenge/msc-puno.html) am [Fachbereich Sozialökonomie](https://www.wiso.uni-hamburg.de/fachbereich-sozoek.html) der Universität Hamburg.
 
