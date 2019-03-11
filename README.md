@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/license/DominikVogel/r-teaching-script.svg)
+![](https://img.shields.io/github/license/DominikVogel/r-teaching-script.svg) ![](https://img.shields.io/github/release/DominikVogel/matching-ids.svg)
 
 # Skript zur Einführung in die Datenanalyse mit R
 
