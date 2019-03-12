@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/license/DominikVogel/r-teaching-script.svg) ![](https://img.shields.io/github/release/DominikVogel/matching-ids.svg)
+![](https://img.shields.io/github/license/DominikVogel/r-teaching-script.svg) ![](https://img.shields.io/github/release/DominikVogel/r-teaching-script.svg)
 
 # Skript zur Einführung in die Datenanalyse mit R
 
@@ -18,17 +18,17 @@ Die meisten der verwendeten Datensätze stammen aus der Online-Erweiterung des B
 
 Folgende Datensätze wurden verwendet:
 
-| Dateiname im Repository | Original von Field et al. | Modifikation |
-|-------------------------|---------------------------|--------------|
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
-|                         |                           |              |
+| Dateiname im Repository   | Original von Field et al. | Modifikation        |
+|---------------------------|---------------------------|---------------------|
+| album_sales.csv           | Album Sales 2.dat         | viele (s.u.)        |
+| drug.csv                  | Viagra.dat                | Variable umbenannt  |
+| exam_anxiety.csv          | Exam Anxiety.dat          |  --                 |
+| Lecturer_Data.csv         | Lecturer Data.dat         | ID hinzugefügt      |
+| Lecturer_Data_Missing.csv | Lecturer Data.dat         | Missings erzeugt    |
+| spider_long.csv           | SpiderLong.dat            | Variablen umbenannt |
+| spider_wide.csv           | SpiderWide.dat            | --                  |
+
+Das Repository enthält ein Skript (``convert_field_datasets.R``), dass die heruntergeladenen Datensätze so modifiziert, dass sie für das Skript verwendet werden können. Dazu müssen lediglich die Original-Datensätze im Unterordner ``RMarkdown/data`` gespeichert werden.
 
 # Struktur des Repositories
 
