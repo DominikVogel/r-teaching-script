@@ -66,12 +66,16 @@ Die Skripte stehen als RMarkdown-Dateien zur Verfügung und können gerne für d
 
 Zum Kompilieren der RMarkdown-Dateien müssen folgende Pakete installiert sein (``install.packages("package", dep = TRUE)``): 
 
+* bitops
+* broman
 * car
+* caTools
 * coefplot
 * cowplot
 * data.table
 * effsize
 * ggedit
+* interplot
 * knitr
 * lm.beta
 * psych
