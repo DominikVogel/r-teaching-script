@@ -96,29 +96,39 @@ Ich bin weder Statistiker noch Programmierer (sondern [Juniorprofessor für Publ
 
 letzter erfolgreicher Build mit folgenden Session Infos:
 
-    R version 3.5.1 (2018-07-02)
+    R version 3.5.3 (2019-03-11)
     Platform: x86_64-w64-mingw32/x64 (64-bit)
     Running under: Windows >= 8 x64 (build 9200)
 
     Matrix products: default
 
     locale:
-    [1] LC_COLLATE=German_Germany.1252  LC_CTYPE=German_Germany.1252    LC_MONETARY=German_Germany.1252 LC_NUMERIC=C                    LC_TIME=German_Germany.1252    
+    [1] LC_COLLATE=German_Germany.1252  LC_CTYPE=German_Germany.1252    LC_MONETARY=German_Germany.1252 LC_NUMERIC=C                   
+    [5] LC_TIME=German_Germany.1252    
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-     [1] ggedit_0.3.0           coefplot_1.2.6         reshape2_1.4.3         cowplot_0.9.4          data.table_1.11.8      stargazer_5.2.2        lm.beta_1.5-1          sjstats_0.17.3         car_3.0-2              carData_3.0-2          yarrr_0.1.5            circlize_0.4.5         BayesFactor_0.9.12-4.2
-    [14] Matrix_1.2-15          coda_0.19-2            jpeg_0.1-8             effsize_0.7.4          tidylog_0.1.0          bindrcpp_0.2.2         skimr_1.0.3            forcats_0.3.0          stringr_1.3.1          dplyr_0.7.8            purrr_0.2.5            readr_1.3.1            tidyr_0.8.2           
-    [27] tibble_1.4.2           ggplot2_3.1.0          tidyverse_1.2.1        knitr_1.21            
+     [1] ggedit_0.3.0           coefplot_1.2.6         reshape2_1.4.3         cowplot_0.9.4          data.table_1.12.0      stargazer_5.2.2       
+     [7] lm.beta_1.5-1          sjstats_0.17.4         car_3.0-2              carData_3.0-2          yarrr_0.1.5            circlize_0.4.5        
+    [13] BayesFactor_0.9.12-4.2 Matrix_1.2-15          coda_0.19-2            jpeg_0.1-8             effsize_0.7.4          tidylog_0.1.0         
+    [19] skimr_1.0.5            forcats_0.4.0          stringr_1.4.0          dplyr_0.8.0.1          purrr_0.3.1            readr_1.3.1           
+    [25] tidyr_0.8.3            tibble_2.0.1           ggplot2_3.1.0          tidyverse_1.2.1        knitr_1.22            
 
     loaded via a namespace (and not attached):
-      [1] readxl_1.2.0        backports_1.1.3     Hmisc_4.1-1         plyr_1.8.4          lazyeval_0.2.1      TMB_1.7.15          splines_3.5.1       TH.data_1.0-9       digest_0.6.18       htmltools_0.3.6     useful_1.2.6        magrittr_1.5        checkmate_1.8.5     interactionTest_1.1 cluster_2.0.7-1    
-     [16] openxlsx_4.1.0      modelr_0.1.2        sandwich_2.5-0      colorspace_1.3-2    rvest_0.3.2         haven_2.0.0         xfun_0.4            crayon_1.3.4        jsonlite_1.6        lme4_1.1-19         bindr_0.1.1         survival_2.43-3     zoo_1.8-4           glue_1.3.0          gtable_0.2.0       
-     [31] emmeans_1.3.1       MatrixModels_0.4-1  sjmisc_2.7.7        shape_1.4.4         abind_1.4-5         scales_1.0.0        mvtnorm_1.0-8       miniUI_0.1.1.1      Rcpp_1.0.0          xtable_1.8-3        htmlTable_1.13.1    foreign_0.8-71      Formula_1.2-3       stats4_3.5.1        prediction_0.3.6.1 
-     [46] htmlwidgets_1.3     httr_1.4.0          shinyAce_0.3.3      RColorBrewer_1.1-2  acepack_1.4.1       modeltools_0.2-22   pkgconfig_2.0.2     nnet_7.3-12         tidyselect_0.2.5    labeling_0.3        rlang_0.3.1         later_0.7.5         munsell_0.5.0       cellranger_1.1.0    tools_3.5.1        
-     [61] cli_1.0.1           generics_0.0.2      sjlabelled_1.0.15   broom_0.5.1         ggridges_0.5.1      shinyBS_0.61        arm_1.10-1          yaml_2.2.0          zip_1.0.0           coin_1.2-2          pbapply_1.3-4       nlme_3.1-137        mime_0.6            xml2_1.2.0          compiler_3.5.1     
-     [76] bayesplot_1.6.0     rstudioapi_0.9.0    curl_3.2            interplot_0.2.1     stringi_1.2.4       lattice_0.20-38     psych_1.8.10        nloptr_1.2.1        stringdist_0.9.5.1  pillar_1.3.1        pwr_1.2-2           GlobalOptions_0.1.0 estimability_1.3    httpuv_1.4.5.1      R6_2.3.0           
-     [91] latticeExtra_0.6-28 promises_1.0.1      gridExtra_2.3       rio_0.5.16          codetools_0.2-16    MASS_7.3-51.1       gtools_3.8.1        assertthat_0.2.0    withr_2.1.2         mnormt_1.5-5        multcomp_1.4-8      parallel_3.5.1      hms_0.4.2           grid_3.5.1          rpart_4.1-13       
-    [106] glmmTMB_0.2.2.0     minqa_1.2.4         snakecase_0.9.2     shiny_1.2.0         lubridate_1.7.4     base64enc_0.1-3   
+      [1] useful_1.2.6        TH.data_1.0-10      minqa_1.2.4         colorspace_1.4-0    rio_0.5.16          sjlabelled_1.0.17   htmlTable_1.13.1   
+      [8] estimability_1.3    GlobalOptions_0.1.0 base64enc_0.1-3     rstudioapi_0.9.0    MatrixModels_0.4-1  mvtnorm_1.0-10      lubridate_1.7.4    
+     [15] xml2_1.2.0          codetools_0.2-16    splines_3.5.3       mnormt_1.5-5        sjmisc_2.7.9        Formula_1.2-3       jsonlite_1.6       
+     [22] nloptr_1.2.1        interactionTest_1.1 broom_0.5.1         cluster_2.0.7-1     shiny_1.2.0         compiler_3.5.3      httr_1.4.0         
+     [29] emmeans_1.3.3       backports_1.1.3     assertthat_0.2.0    lazyeval_0.2.1      cli_1.0.1           later_0.8.0         htmltools_0.3.6    
+     [36] acepack_1.4.1       tools_3.5.3         gtable_0.2.0        glue_1.3.1          Rcpp_1.0.0          cellranger_1.1.0    nlme_3.1-137       
+     [43] psych_1.8.12        insight_0.1.2       xfun_0.5            openxlsx_4.1.0      lme4_1.1-21         rvest_0.3.2         miniUI_0.1.1.1     
+     [50] mime_0.6            gtools_3.8.1        interplot_0.2.1     shinyAce_0.3.3      MASS_7.3-51.1       zoo_1.8-4           scales_1.0.0       
+     [57] shinyBS_0.61        promises_1.0.1      hms_0.4.2           parallel_3.5.3      sandwich_2.5-0      RColorBrewer_1.1-2  yaml_2.2.0         
+     [64] curl_3.3            gridExtra_2.3       pbapply_1.4-0       rpart_4.1-13        latticeExtra_0.6-28 stringi_1.4.3       checkmate_1.9.1    
+     [71] boot_1.3-20         zip_2.0.1           shape_1.4.4         rlang_0.3.1         pkgconfig_2.0.2     arm_1.10-1          lattice_0.20-38    
+     [78] htmlwidgets_1.3     labeling_0.3        tidyselect_0.2.5    plyr_1.8.4          magrittr_1.5        R6_2.4.0            generics_0.0.2     
+     [85] Hmisc_4.2-0         multcomp_1.4-10     pillar_1.3.1        haven_2.1.0         foreign_0.8-71      withr_2.1.2         survival_2.43-3    
+     [92] abind_1.4-5         nnet_7.3-12         modelr_0.1.4        crayon_1.3.4        grid_3.5.3          readxl_1.3.1        digest_0.6.18      
+     [99] xtable_1.8-3        httpuv_1.4.5.1      munsell_0.5.0    
