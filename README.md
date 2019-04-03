@@ -28,7 +28,7 @@ Folgende Datensätze wurden verwendet:
 | spider_long.csv           | SpiderLong.dat            | Variablen umbenannt |
 | spider_wide.csv           | SpiderWide.dat            | --                  |
 
-Das Repository enthält ein Skript (``convert_field_datasets.R``), das die heruntergeladenen Datensätze so modifiziert, dass sie für das Skript verwendet werden können. Dazu müssen lediglich die Original-Datensätze im Unterordner ``RMarkdown/data`` gespeichert werden.
+Das Repository enthält ein Skript (``RMarkdown/convert_field_datasets.R``), das die heruntergeladenen Datensätze so modifiziert, dass sie für das Skript verwendet werden können. Dazu müssen lediglich die Original-Datensätze im Unterordner ``RMarkdown/data`` gespeichert werden.
 
 # Struktur des Repositories
 
@@ -94,7 +94,7 @@ Ich bin weder Statistiker noch Programmierer (sondern [Juniorprofessor für Publ
 
 # Session Info build
 
-letzter erfolgreicher Build mit folgenden Session Infos:
+Letzter erfolgreicher Build mit folgenden Session Infos:
 
     R version 3.5.3 (2019-03-11)
     Platform: x86_64-w64-mingw32/x64 (64-bit)
