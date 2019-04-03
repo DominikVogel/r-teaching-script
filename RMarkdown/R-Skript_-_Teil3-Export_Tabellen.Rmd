@@ -1,0 +1,258 @@
+---
+title: "R-Skript PUNO-Forschungsprojekt"
+author: "Dominik Vogel"
+date: 'Stand: `r format(Sys.time(), "%d.%m.%Y")`'
+output:
+  pdf_document:
+    fig_caption: no
+    keep_tex: yes
+    number_section: yes
+    toc: yes
+    toc_depth: 3
+  html_notebook:
+    number_section: yes
+  html_document: default
+  word_document:
+    toc: yes
+    toc_depth: 3
+subtitle: "Teil 3 -- Tabellen nach Word exportieren"
+classoption: a4paper
+header-includes:
+- \usepackage[ngerman]{babel}
+- \usepackage[babel]{csquotes}
+- \DefineVerbatimEnvironment{code}{Verbatim}{frame=single, numbers=left}
+- \usepackage{etoolbox}
+- \makeatletter \preto{\@verbatim}{\topsep=0pt \partopsep=0pt } \makeatother
+- \usepackage{float}
+- \floatplacement{figure}{H}
+- \clubpenalty10000
+- \widowpenalty10000
+- \displaywidowpenalty=10000
+- \usepackage{titling}
+- \postdate{\begin{center} \includegraphics[height=1.5em]{fig/cc-by}\\[\bigskipamount] \end{center}}
+---
+
+
+```{r setup_output, include=FALSE}
+library(knitr)
+hook_output_def = knitr::knit_hooks$get('output')
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(options$vspaceout)) {
+    end <- paste0("\\vspace{", options$vspaceout, "}")
+    stringr::str_c(hook_output_def(x, options), end)
+  } else {
+    hook_output_def(x, options)
+  }
+})
+
+hook_source_def = knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$vspaceecho)) {
+    begin <- paste0("\\vspace{", options$vspaceecho, "}")
+    stringr::str_c(begin, hook_source_def(x, options))
+  } else {
+    hook_source_def(x, options)
+  }
+})
+```
+
+```{r, include = FALSE}
+# install.packages("tidyverse", dep = TRUE)
+# install.packages("stargazer", dep = TRUE)
+# install.packages("data.table", dep = TRUE)
+```
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H', fig.align = "center")
+knitr::opts_chunk$set(vspaceout='2em')
+knitr::opts_chunk$set(vspaceecho='1em')
+```
+
+# Vorbemerkungen
+
+``R`` wird idealtypisch nicht mit Word sondern mit \LaTeX\ verwendet. Viele Funktionen zum Export sind daher darauf ausgelegt, Ergebnisse in \LaTeX\ zu exportieren. Wir verwenden hier daher eine Variante, die eigentlich für den Export für Internetseiten gedacht ist. Die vorgestellten Funktionen produzieren zunächst eine HTML-Datei. Diese Datei öffnen wir anschließend mit Word und kopieren die Tabelle in ein normales Worddokument.
+
+# Pakete
+
+Wir benötigen zunächst wieder das ``tidyverse`` Paket:
+
+```{r, eval = FALSE, echo = TRUE}
+library(tidyverse)
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+```
+
+Für den Export verwenden wir außerdem das Paket ``stargazer``
+
+```{r, eval = FALSE, echo = TRUE}
+install.packages("stargazer", dep = TRUE)
+library(stargazer)
+```
+
+```{r, include = FALSE}
+library(stargazer)
+```
+
+# Grundlagen von ``stargazer``
+
+``stargazer`` ist darauf ausgelegt, einen Data Frame oder verschiedene Modelle, wie zum Bespiel ein Regressionsmodell, zu verarbeiten. ``stargazer`` erstellt dann eine formatierte Tabelle als reine Textausgabe (``type = "text"``), als \LaTeX -Code (``type = "latex"``) oder Website (``type = "html"``). 
+
+Unter https://cran.r-project.org/web/packages/stargazer/vignettes/stargazer.pdf findet sich eine ausführliche Anleitung. In der Hilfe (``?stargazer``) gibt es außerdem eine Übersicht über die vielfältigen Anpassungsmöglichkeiten.
+
+Starten wir als kurzes Beispiel mit einer Tabelle deskriptiver Kennwerte. Hier müssen wir einen kleinen Trick anwenden, da stargazer nicht mit dem speziellen Format von Data Frame umgehen kann, das wir mit ``read_csv()`` bekommen (Tibble). Wir setzen den Datensatz ``albums`` daher in die Funktion ``as.data.frame``.
+
+```{r}
+albums <- read_csv("data/album_sales.csv") # Albumdaten aus Teil 2 importieren
+stargazer(as.data.frame(albums), 
+          type = "html")
+```
+
+Wir sehen, dass ``stargazer`` standardmäßig den reinen HTML-Code ausgibt. Damit können wir allerdings nicht viel anfangen. Wir leiten den Output daher mit der Option ``out="deskriptiv.html"`` in eine Datei um.
+
+
+```{r, results='hide'}
+stargazer(as.data.frame(albums), 
+          type = "html", 
+          out = "output/deskriptiv.html")
+```
+
+Das Resultat sieht ungefähr so aus:
+
+![](output/deskriptiv.png)
+
+
+\newpage
+# Deskriptive Kennwerte
+
+Nachdem wir nun das Grundprinzip verstanden haben, können wir die Standardausgabe noch etwas anpassen. Wir beschränken hierfür die Zahl der Nachkommastellen auf 2, benennen die Variablen um und fügen eine Beschriftung hinzu:
+
+```{r, results='hide'}
+stargazer(as.data.frame(albums), 
+          type = "html", 
+          out = "output/deskriptiv2.html",
+          digits = 2, # Anzahl der Nachkommastellen auf 2 beschränken
+          digits.extra = 2, 
+          covariate.labels = c("Werbeausgaben in Pfund", 
+                               "Verkaufszahlen", 
+                               "Anzahl Wiedergaben Radio", 
+                               "Attraktivität Band",
+                               "Hip-Hop (1 = ja)"),
+          title = "Deskriptive Statistik")
+```
+
+Das Resultat:
+
+![](output/deskriptiv2.png)
+
+# Korrelationstabelle
+
+Für eine Korrelationstabelle übergeben wir einfach das Resultat aus ``cor()`` an ``stargazer``
+
+```{r, results='hide'}
+cor_albums <- cor(albums, 
+                  use = "pairwise.complete.obs") # wegen NAs
+stargazer(cor_albums, 
+          type = "html", 
+          out = "output/cor.html")
+```
+
+![](output/cor.png)
+
+
+Um die Korrelationstabelle noch etwas sparsamer zu machen, streichen wir die doppelten Informationen. Hierzu müssen wir allerdings ein wenig Hand anlegen.
+
+```{r}
+# Hide upper triangle
+upper <- cor_albums # neues Objekt erstellen
+upper[upper.tri(cor_albums)] <- NA    # Werte für obere Triangel löschen
+
+# letzte Spalte entfernen
+limit <- ncol(upper) - 1 # Letzte Spalte ermitteln
+upper <- upper[,1:limit] # letzte Spalte ausblenden
+
+# In Data Frame umwandeln
+upper <- data.frame(upper) 
+```
+
+Bevor wir die Tabelle erstellen können, müssen wir zunächst noch die Zeilen benennen. Hierfür nutzen wir die Funktion ``setattr()`` aus dem Paket ``data.table``.
+
+```{r, eval = FALSE, echo = TRUE}
+install.packages("data.table", dep = TRUE)
+library(data.table)
+```
+
+```{r, include = FALSE}
+library(data.table)
+```
+
+Wir vergeben neben den Variablennamen noch fortlaufende Nummern, um im Spaltenkopf der finalen Tabelle etwas Platz zu sparen:
+
+```{r}
+upper <- (setattr(upper, "row.names", c("(1) Werbeausgaben in Pfund", 
+                                        "(2) Verkaufszahlen", 
+                                        "(3) Anzahl Wiedergaben Radio", 
+                                        "(4) Attraktivität Band",
+                                        "(5) Hip-Hop (1= ja)")))
+```
+
+
+Nun können wir endlich die Tabelle erstellen:
+
+```{r, results='hide'}
+# Tabelle mit stargazer erstellen
+stargazer(upper, 
+          type = "html", 
+          out = "output/cor2.html", 
+          summary = FALSE, # Deskriptive Kennwerte verhindern
+          digits = 2, # Anzahl der Nachkommastellen auf 2 beschränken
+          digits.extra = 2, 
+          covariate.labels = c("", "(1)", "(2)", "(3)", "(4)") # Spalten benennen
+          )
+```
+
+![](output/cor2.png)
+
+
+\newpage
+# Regressionstabelle
+
+Für die Regressionstabelle müssen wir glücklicherweise weniger Aufwand betreiben. Wir schätzen zunächst die Modelle die wir in die Tabelle integrieren wollen und übergeben diese anschließend an ``stargazer``.
+
+```{r, results='hide'}
+model_albums1 <- lm(sales ~ adverts, data = albums)
+model_albums2 <- lm(sales ~ adverts + airplay + attract, data = albums)
+stargazer(model_albums1, model_albums2,
+          type = "html", 
+          out = "output/reg.html")
+```
+
+![](output/reg.png)
+
+\newpage
+Das Ergebnis kann sich schon sehen lassen. Wir nehmen nur noch ein paar Anpassungen vor:
+
+```{r, results='hide'}
+stargazer(model_albums1, model_albums2,
+          type = "html", 
+          out = "output/reg2.html",
+          align = TRUE, # Werte untereinander ausrichten
+          title = "Regression results for explaining album sales", # Titel
+          dep.var.caption = "", # "Dependent variable" ausblenden
+          dep.var.labels.include = FALSE, # Keine Angabe der abhängigen Variable
+          covariate.labels = c("Werbeausgaben in Pfund",  # uaV benennen
+                               "Verkaufszahlen", 
+                               "Anzahl Wiedergaben Radio", 
+                               "Attraktivität Band",
+                               "Hip-Hop (1 = ja)"),
+          omit.stat = c("ser"), # Standardfehler der Residuen ausblenden
+          star.cutoffs = c(0.05, 0.01, 0.001), # Sternchen für 0.05, 0.01, 0.001
+          notes.append = TRUE, # Standardnotiz ergänzen
+          notes = c("standard errors in parentheses") # Note anpassen
+          )
+```
+
+Nun haben wir eine publikationsfähige Regressionstabelle
+
+![](output/reg2.png)

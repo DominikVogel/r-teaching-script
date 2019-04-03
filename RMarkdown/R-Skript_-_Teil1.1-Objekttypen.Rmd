@@ -1,0 +1,220 @@
+---
+title: "R-Skript PUNO-Forschungsprojekt"
+author: "Dominik Vogel"
+date: 'Stand: `r format(Sys.time(), "%d.%m.%Y")`'
+output:
+  pdf_document:
+    keep_tex: yes
+    number_section: yes
+    toc: yes
+    toc_depth: 3
+  html_notebook:
+    number_section: yes
+  html_document: default
+  word_document:
+    toc: yes
+    toc_depth: 3
+subtitle: Teil 1.1 -- Objekttypen
+classoption: a4paper
+header-includes:
+- \usepackage[ngerman]{babel}
+- \usepackage[babel]{csquotes}
+- \DefineVerbatimEnvironment{code}{Verbatim}{frame=single, numbers=left}
+- \usepackage{etoolbox}
+- \makeatletter \preto{\@verbatim}{\topsep=0pt \partopsep=0pt } \makeatother
+- \clubpenalty10000
+- \widowpenalty10000
+- \displaywidowpenalty=10000
+- \usepackage{titling}
+- \postdate{\begin{center} \includegraphics[height=1.5em]{fig/cc-by}\\[\bigskipamount] \end{center}}
+---
+
+```{r setup_output, include=FALSE}
+hook_output_def = knitr::knit_hooks$get('output')
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(options$vspaceout)) {
+    end <- paste0("\\vspace{", options$vspaceout, "}")
+    stringr::str_c(hook_output_def(x, options), end)
+  } else {
+    hook_output_def(x, options)
+  }
+})
+
+hook_source_def = knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$vspaceecho)) {
+    begin <- paste0("\\vspace{", options$vspaceecho, "}")
+    stringr::str_c(begin, hook_source_def(x, options))
+  } else {
+    hook_source_def(x, options)
+  }
+})
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(vspaceout='2em')
+knitr::opts_chunk$set(vspaceecho='1em')
+```
+
+```{r, include = FALSE}
+# install.packages("tidyverse", dep = TRUE)
+```
+
+
+
+
+# Vektoren
+
+Der zweite wichtige Objekttyp wird als Vektor bezeichnet. Ein Vektor enthält mehrere Elemente desselben Datentyps (dazu gleich mehr).
+
+Ein Vektor wird mit ``c()`` (*combine*) erstellt. 
+
+```{r}
+alter <- c(21, 78, 24, 26, 35)
+alter
+```
+
+Der Vektor ``alter`` hat nun fünf Elemente, die alle vom Typ ``numeric`` sind. Mit einem solchen Vektor kann man auch rechnen:
+
+```{r}
+alter * 12
+```
+
+``R`` multipliziert in diesem Fall alle Werte des Vektors mit 12.
+
+Auch erste Kennzahlen lassen sich mit einem Vektor ermitteln:
+
+```{r}
+mean(alter)
+```
+
+
+
+Wir können für einen Vektor auch Text verwenden:
+
+```{r}
+geschlecht <- c("maennlich", "weiblich")
+geschlecht
+```
+
+Dieser Vektor hat zwei Elemente vom Typ ``character``. Mit einem solchen Vektor kann man natürlich nicht rechnen
+
+```{r, error=TRUE}
+geschlecht * 2
+```
+
+
+
+Mischt man verschiedene Datentypen, so speichert ``R`` die Elemente des Vektors wenn möglich in einem Datentyp, der alle Elemente vereinen kann.
+
+```{r}
+mix <- c(5, 7, "weiblich")
+mix
+```
+
+An den Anführungszeichen um 5 und 7 sieht man, dass die beiden Werte nicht als Zahlen (``numeric``) sondern als Text (``character``) gespeichert wurden. Damit lässt sich folglich auch nicht mehr rechnen. 
+
+```{r, error = TRUE}
+mix * 5
+```
+
+# Matrizen
+
+Matrizen sind im Prinzip Tabellen. Man kann sie auch als Sammlung von Vektoren betrachten. Jede Spalte ist ein Vektor.
+
+Erstellen wir eine Matrix, die in der ersten Spalte das Gewicht mehrerer Personen und in der zweiten Spalte deren Größe speichert. Hierzu erstellen wir zunächst zwei Vektoren und "kleben" diese anschließend zusammen mit ``alter`` zu einer Matrix zusammen.
+
+```{r}
+gewicht <- c(90, 83, 55, 76, 54)
+groesse <- c(191, 150, 165, 170, 171)
+
+X <- cbind(alter, gewicht, groesse)
+X
+```
+
+Mit Hilfe von eckigen Klammern kann man auf einzelne Werte zugreifen
+
+```{r}
+X[1,3]
+```
+
+Der Befehle gibt den Wert in der ersten Zeile und dritten Spalte aus. Die Grundlegende Logik ist folglich ``Matrix[Zeile, Spalte]``. 
+
+Man kann auch auf eine gesamte Zeile oder Spalte zugreifen.
+
+
+```{r}
+X[1,]
+```
+
+```{r}
+X[,3]
+```
+
+
+
+# Data Frame
+
+Der Objekttyp, der uns am meisten beschäftigen wird, ist der Data Frame. Er ist eine Erweiterung von Matrizen und ermöglicht es, Vektoren mit verschiedene Datentypen zu vereinen. Er ist das, was in ``SPSS`` oder ``Stata`` der Datensatz ist. Mit dem Unterschied, dass ``R`` viele verschiedene Datensätze gleichzeitig "geöffnet" haben kann. Ein Data Frame ist lediglich ein weiteres Objekt.
+
+Erweitern wir unsere Matrix ``X`` um eine Spalte für Geschlecht:
+
+```{r}
+geschlecht <- c("m", "m", "w", "m", "w")
+X <- data.frame(alter, gewicht, groesse, geschlecht)
+X
+```
+
+Data Frames haben nicht nur den Vorteil, dass sie Vektoren unterschiedlicher Art gemeinsam speichern können, sondern auch, dass man die einzelnen Spalten über ihren Namen ansprechen kann:
+
+```{r}
+X$groesse
+X$geschlecht
+```
+
+Für Geschlecht sehen wir nun einen etwas merkwürdigen Output. Der Grund hierfür ist, dass ``R`` diesen Vektor in einen Faktor umgewandelt hat.
+
+```{r}
+class(X$geschlecht)
+```
+
+Faktoren sind ``R``s Objekttyp zur Speicherung von ordinalen Variablen mit einer begrenzten Anzahl von Ausprägungen. Mehr dazu weiter unten. Wenn wir die Umwandlung in einen Faktor verhindern wollen, können wir in vielen Funktionen die Option ``stringsAsFactors`` verwenden:
+
+
+```{r}
+X <- data.frame(alter, gewicht, groesse, geschlecht, stringsAsFactors = FALSE)
+X
+```
+
+``geschlecht`` ist nun als normale ``character`` Variable gespeichert.
+
+```{r}
+class(X$geschlecht)
+```
+
+
+
+# Faktoren
+
+Faktoren sind ``R``s Objekttyp zur Speicherung von ordinalen Variablen mit einer begrenzten Anzahl von Ausprägungen. Dieser Datentyp kann an verschiedenen Stellen nützlich sein, weil ``R`` die entsprechende Variable automatisch wie eine ordinale Variable behandelt (zum Beispiel bei der Erstellung von Grafiken oder in Regressionen). 
+
+Geschlecht hat, wie oben zu sehen, zwei Ausprägungen: m und w. 
+
+Es ist sehr einfach, einen Vektor in einen Faktor umzuwandeln:
+
+```{r}
+geschlecht_faktor <- factor(geschlecht)
+geschlecht_faktor
+```
+
+Man kann die Bezeichnung der Levels auch verändern.
+
+```{r}
+levels(geschlecht_faktor)[levels(geschlecht_faktor) == "m"] <- "male"
+levels(geschlecht_faktor)[levels(geschlecht_faktor) == "w"] <- "female"
+geschlecht_faktor
+str(geschlecht_faktor)
+```
+
+
+Der Objekttyp Faktor kann manchmal nützlich sein, verursacht aber ungleich häufiger Probleme. Dies ist vor allem dann der Fall, wenn eigentlich numerische Variablen in Faktoren umgewandelt werden und dies Fehlermeldungen verursacht, weil eine bestimmte Funktion ein numerisches Objekt erwartet. Die Importfunktion ``read_csv()`` verhindert daher auch die Bildung von Faktoren beim Import. Ist eine numerische Variable bereits in einen Faktor umgewandelt worden, hilft die Funktion ``as.numeric()``.

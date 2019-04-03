@@ -1,0 +1,811 @@
+---
+title: "R-Skript PUNO-Forschungsprojekt"
+author: "Dominik Vogel"
+date: 'Stand: `r format(Sys.time(), "%d.%m.%Y")`'
+output:
+  pdf_document:
+    keep_tex: yes
+    number_section: yes
+    toc: yes
+    toc_depth: 3
+  html_notebook:
+    number_section: yes
+  html_document: default
+  word_document:
+    toc: yes
+    toc_depth: 3
+subtitle: Teil 1 -- R, Datenmanagement, deskriptive Statistik
+classoption: a4paper
+header-includes:
+- \usepackage[ngerman]{babel}
+- \usepackage[babel]{csquotes}
+- \DefineVerbatimEnvironment{code}{Verbatim}{frame=single, numbers=left}
+- \usepackage{etoolbox}
+- \makeatletter \preto{\@verbatim}{\topsep=0pt \partopsep=0pt } \makeatother
+- \clubpenalty10000
+- \widowpenalty10000
+- \displaywidowpenalty=10000
+- \usepackage{titling}
+- \postdate{\begin{center} \includegraphics[height=1.5em]{fig/cc-by}\\[\bigskipamount] \end{center}}
+---
+
+```{r setup_output, include=FALSE}
+library(knitr)
+hook_output_def = knitr::knit_hooks$get('output')
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(options$vspaceout)) {
+    end <- paste0("\\vspace{", options$vspaceout, "}")
+    stringr::str_c(hook_output_def(x, options), end)
+  } else {
+    hook_output_def(x, options)
+  }
+})
+
+hook_source_def = knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$vspaceecho)) {
+    begin <- paste0("\\vspace{", options$vspaceecho, "}")
+    stringr::str_c(begin, hook_source_def(x, options))
+  } else {
+    hook_source_def(x, options)
+  }
+})
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(vspaceout='2em')
+knitr::opts_chunk$set(vspaceecho='1em')
+```
+
+```{r, include = FALSE}
+# install.packages("tidyverse", dep = TRUE)
+# install.packages("psych", dep = TRUE)
+# install.packages("skimr", dep = TRUE)
+# install.packages("tidylog", dep = TRUE)
+```
+
+
+
+
+# R installieren
+
+Um mit ``R`` zu arbeiten, ist die Nutzung zweier Programme zu empfehlen: ``R`` (der Kern) und ``RStudio`` (als praktische Entwicklungsumgebung).
+
+1. ``R`` herunterladen und installieren (in der Regel kann man die Standardeinstellungen "durchklicken").
+   * Für Windows: https://cran.r-project.org/bin/windows/base/
+   * Für macOS: https://cran.r-project.org/bin/macosx/ 
+2. ``RStudio`` herunterladen (https://www.rstudio.com/products/rstudio/download/#download) und installieren 
+
+
+## R Studio konfigurieren
+
+Es empfiehlt sich, einige Standardeinstellungen in ``R`` zu ändern. Klicken Sie hierfür auf ``Tools`` -> ``Global Option ...`` und nehmen Sie folgende Änderungen vor:
+
+1. Unter ``General`` deaktivieren Sie die folgenden Optionen:
+   1. Restore most recently opened project at startup
+   2. Restore previously open source documents at startup
+   3. Restore .RData into workspace at startup
+   4. Stellen Sie "Save workspace to .RData on exit" auf ``Never``
+2. Unter ``Code`` -> ``Display`` aktivieren Sie ``Show margin`` und stellen Sie den Wert auf 79
+3. Unter ``Code`` -> ``Saving`` ändern Sie ``Default text encoding`` auf ``UTF-8``
+
+
+# Hilfe finden
+
+``R`` ist nicht einfach und (fast) niemand kann sich alle benötigten Befehle und ihre Optionen merken. Umso wichtiger ist es, dass man weiß, wo man Hilfe findet. 
+
+## Die R-Hilfe
+
+Erster Anlaufpunkt ist in der Regel die ``R``-Hilfe. Man erreicht sie direkt in ``R``.
+
+Weiß man bereits, wie ein Befehl heißt und will mehr dazu erfahren, bekommt man mit einem ``?`` gefolgt vom entsprechenden Befehl Zugriff auf die Dokumentation des Befehls:
+
+```{r, eval=FALSE}
+?mean
+```
+
+Ohne genauen Befehl helfen zwei Fragezeichen und ein Suchbegriff in Anführungszeichen:
+
+```{r, eval=FALSE}
+??"standard deviation"
+```
+
+
+## Lehrbücher
+
+Wenn die ``R``-Hilfe nicht weiterhilft, kann vielleicht ein Buch helfen. Ich empfehle die folgenden Bücher:
+
+* Field, A.; Miles, J.; Field, Z. (2012): Discovering Statistics Using R
+* Hatzinger, R.; Hornik, K.; Nagel, H.; Maier, M. J. (2014): R -- Einführung durch angewandte Statistik. (im Uni-Netz auch als ebook (http://lib.myilibrary.com?id=651009) verfügbar)
+* Grolemund, G.; Wickham, H. (2016): R for Data Science. (auch als ebook (http://r4ds.had.co.nz/) frei verfügbar)
+* Navarro, D.: Learning Statistics with R. (als ebook (https://learningstatisticswithr.com/) frei verfügbar)
+
+## Suchmaschine
+
+In den meisten Fällen hilft auch die Suchmaschine des Vertrauens.
+
+## Stack Overflow
+
+Hier leitet einen auch die Suchmaschine schnell hin: Stack Overflow (https://stackoverflow.com/questions/tagged/r). Auf der Plattform lässt sich für fast jedes ``R``-Problem eine Lösung finden. Und wenn nicht, dann kann auch eine Frage gepostet werden.
+
+
+
+# Grundlagen 
+
+Die grundlegendste Verwendung von ``R`` ist der "Taschenrechner". Geben Sie ``5 + 7`` in die "Console" ein und drücken Sie Enter.
+
+```{r}
+5 + 7
+```
+
+
+**Rechenoperatoren**
+
+| Operator | Funktion
+|----------|------------
+| + | Addieren 
+| - | Subtrahieren
+| $*$ | Multiplizieren
+| / | Dividieren
+| ^ | Potenzieren
+
+
+Ein Schritt weiter kommt man mit der Verwendung von Funktionen. Mit dem folgenden Befehl erhalten wir zum Beispiel den Exponenten von 1 (*Euler'sche Zahl*)
+
+```{r}
+exp(1)
+```
+
+Funktionen lassen sich auch verschachteln.
+
+```{r}
+log(exp(1))
+```
+
+
+
+# Arbeiten mit R
+
+Ein Grundsatz von Forschung ist die Nachvollziehbarkeit des Forschungsprozesses. Ein anderer Forscher/eine andere Forscherin soll in der Lage sein, zu reproduzieren, was wir getan haben (Reproducability).
+
+Dieser Grundsatz hilft aber auch dabei, in Teams zusammenzuarbeiten und zu einem späteren Zeitpunkt zu verstehen, was man getan hat.
+
+> "Reproducibility is just collaboration with people you don't know -- including yourself next week." --- Philip Stark, University of California, Berkeley 
+
+Aus diesem Grund tippen wir den Code nicht in die Console, sondern speichern alles was wir machen in einem Skript. Und um dieses Skript beliebig kopieren zu können, ohne uns Gedanken darüber machen zu müssen, wo die Dateien liegen, betten wir das Skript in ein ``RStudio``-Projekt ein. Das Projekt dient sozusagen als Container für alle Dateien des Projekts.
+
+## Projekte und Skripte
+
+Zum Erstellen eines Projekts klicken Sie in ``RStudio`` auf ``File`` -> ``New Project`` und wählen im folgenden Dialogfenster ``New Directory`` -> ``New Project`` aus. Anschließend wählen Sie einen Namen für das Projekt (``Directory name``) sowie einen Speicherort und klicken Sie auf ``Create Project``.
+
+Erstellen Sie nun ein Skript in diesem Projekt: ``File`` -> ``New File`` -> ``R Script``. 
+
+Beginnen Sie das neue Skript mit einer kurzen Beschreibung:
+
+```
+# Projekt: Übungsskript PUNO-Forschungsprojekt
+# Autor: Dominik Vogel
+# Datum: 04.04.2019
+```
+
+Alles was in ``R`` hinter einem ``#`` steht, ist ein Kommentar und wird beim Ausführen des Skripts ignoriert. Es dient nur dazu, dass Sie oder eine andere Person den Code versteht. Machen Sie reichlich Gebrauch davon!
+
+Sie sollten Ihr Skript auch strukturieren. ``RStudio`` erkennt Kommentare die mit mindestens vier Strichen, Gleichzeichen oder Rauten enden als Überschriften. Am unteren Rand des Skriptfensters lässt sich damit navigieren.
+
+```
+# Überschrift ---------------------------
+# Überschrift ===========================
+# Überschrift ###########################
+```
+
+Hadley Wickham gibt auf seiner Seite ([http://adv-r.had.co.nz/Style.html](http://adv-r.had.co.nz/Style.html)) viele weitere nützliche Hinweise zum Strukturieren und Formatieren von ``R``-Code. 
+
+
+Speichern Sie nun Ihr neues Skript. 
+
+
+
+
+
+# Objekte und Variablen
+
+Da wir ``R`` nicht als Taschenrechner verwenden wollen, gehen wir weiter zu den Objekten.
+
+> "To understand computations in R, two slogans are helpful: Everything that exists is an object. Everything that happens is a function call." (John M. Champers, einer der Entwickler von S, dem Vorgänger von R)
+
+Kurzer Background: ``R`` ist eigentlich eine komplette "objektorientierte" Programmiersprache. Das soll nicht erschrecken, hilft aber manchmal ein bisschen beim Verständnis. Es bedeutet, dass alles womit man in ``R`` hantiert ein Objekt ist. Dies kann ein einzelner Wert, ein ganzer Datensatz oder das Ergebnis einer Analyse sein. Die vorhandenen Objekte sieht man in ``RStudio`` rechts oben unter "Environment".
+
+Ein Objekt ist schnell erstellt, indem man einen Namen definiert und diesem mit `` <- `` einen Wert zuweist:
+
+```{r}
+y <- 3
+```
+
+
+## Bezeichnung von Objekten
+
+``R`` lässt relativ viel Freiraum bei der Benennung von Objekten. Es empfiehlt sich aber, einige Konventionen zu beachten, die die Arbeit erleichtern:
+
+- Namen sollten Sinn ergeben und dennoch relativ kurz sein (da sie getippt werden müssen)
+- Keine Leerzeichen verwenden
+- Wörter können mit Punkt, Bindestrich oder Unterstrich getrennt werden. Ich bevorzuge den Unterstrich da dies auch in anderen Programmen Verwendung findet.
+- Beschränken Sie sich auf Kleinbuchstaben, dann haben Sie beim Tippen weniger Mühe.
+
+
+\newpage
+## Variablen 
+
+Wir haben nun ein Objekt ``y`` erstellt, und ihm den Wert ``3`` zugewiesen. Ein solches Objekt mit einem einzelnen Wert wird als Variable, Skalar oder Value bezeichnet.
+
+
+
+Man kann sich den Wert auch ausgeben lassen:
+
+```{r}
+y
+```
+
+
+Man kann natürlich auch mit Variablen rechnen.
+
+```{r}
+y * 3
+```
+
+```{r}
+x <- 5
+x * y
+```
+
+
+## Vektoren 
+
+Man kann auch mehrere Werte in einem Objekt speichern. Man nennt dies einen Vektor.
+
+Ein Vektor wird mit ``c()`` (*combine*) erstellt. 
+
+```{r}
+alter <- c(21, 78, 24, 26, 35)
+alter
+```
+
+Der Vektor ``alter`` hat nun fünf Elemente. Mit einem solchen Vektor kann man auch rechnen (vorausgesetzt er enthält nur numerische Elemente):
+
+```{r}
+alter * 12
+```
+
+``R`` multipliziert in diesem Fall alle Werte des Vektors mit 12.
+
+Auch erste Kennzahlen lassen sich mit einem Vektor ermitteln:
+
+```{r}
+mean(alter)
+```
+
+
+\newpage
+Wir können für einen Vektor auch Text verwenden, wenn wir diesen in Anführungszeichen setzen:
+
+```{r}
+geschlecht <- c("maennlich", "weiblich")
+geschlecht
+```
+
+
+``R`` kennt eine Vielzahl weiterer Objekttypen. Wir wollen an dieser Stelle nicht im Detail auf alle eingehen. Mehr zu den Objekttypen finden Sie im Zweifel in Teil 1.1. Da wir diese nur selten benötigen, gehen wir gleich zu den Datensätzen, da wir in aller Regel mit diesen arbeiten. Um dies möglichst einfach zu gestalten, lernen wir vorher, wie man Pakete installiert und Daten importiert.
+
+
+
+# Pakete
+
+Eine der großen Stärken von ``R`` ist die Nutzung von s.g. Paketen. Diese sind Erweiterungen von ``R``, die von jedem erstellt werden können. Die meisten davon, werden über ein zentrales Repository (CRAN) zur Verfügung gestellt und können direkt aus ``R`` heraus installiert werden:
+
+```{r, eval=FALSE}
+install.packages("tidyverse", dep = TRUE)
+```
+
+Pakete müssen nur einmal installiert, nach einem Neustart von ``R`` jedoch neu geladen werden. Es empfiehlt sich daher alle verwendeten Pakete am Anfang eines Skripts zu laden:
+
+```{r, eval=FALSE, echo=TRUE}
+library(tidyverse)
+```
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+
+Pakete stellen in ``R`` neue Befehle (*Funktionen*) bereit. Im folgenden Abschnitt werden wir dies zum ersten Mal nutzen, wenn wir die Funktion ``read_csv()`` zum importieren von Daten verwenden. ``read_csv()`` gehört nicht zum Kern von ``R`` und lässt sich ohne das Paket ``tidyverse`` nicht nutzen.
+
+
+# Daten importieren
+
+Da wir die Daten ja nicht selbst in ``R`` anlegen wollen, müssen wir diese in der Regel importieren. Dafür hält ``R`` viele verschiedene Funktionen bereit (mindestens eine pro Dateityp). In der Regel liegen die Daten als CSV-Datei vor. Um diese zu importieren nutzen wir die Funktion ``read_csv()`` aus dem ``tidyverse`` Paket.
+
+## Exkurs: Alternative Importfunktionen
+
+Manchmal liegen die Daten auch in anderen Formaten vor. Hierfür eignen sich folgende Funktionen (im ``tidyverse`` Paket):
+
+Funktion  |  Verwendung   | Dateiendung
+----------|---------------|----------------
+read_csv  |  Komma-getrennte Textdateien  |  .csv
+read_csv2 |   Semikolon-getrennte Textdateien   | .csv
+read_excel  |  Excel-Dateien  |  .xls .xlsx
+read_sav    |  SPSS-Dateien   | .sav
+read_dta    |  Stata-Dateien  |  .dta
+
+
+\newpage
+## Import
+
+Wir starten mit dem "Lecturer-Datensatz" von Field et al. (2012).
+
+> "We took a random sample of five psychology lecturers from the University of Sussex [job = 1] and five psychology students [job = 0] and then measured how many friends they had, their weekly alcohol consumption (in units), their yearly income and how neurotic they were (higher score is more neurotic)" (Field et al. 2012: 86).
+
+Wir habe die Daten vorher unter ``data/Lecturer_Data.csv`` abgespeichert. Wir können diese anschließend mit ``read_csv()`` importieren.
+
+
+
+```{r}
+lecturer_data <- read_csv("data/Lecturer_Data.csv")
+```
+
+
+
+# Datensätze
+
+Wir haben nun ein neues Objekt mit dem Namen ``lecturer_data`` erstellt. Dieses ist ein Objekt vom Typ "Data Frame"[^1] und enthält die importierten Daten. Wenn wir den Namen eingeben und ausführen, gibt ``R`` den Inhalt wieder.
+
+[^1]: Genau genommen handelt es sich um den Typ "Tibble", der jedoch nur eine Spezialform eines Data Frames ist. Der Unterschied besteht im Wesentlichen darin, dass Tibble übersichtlicherer dargestellt werden.
+
+```{r}
+lecturer_data
+```
+
+
+Die einzelnen Spalten eines Data Frames kann man mit einem ``$`` hinter dem Objektnamen ansprechen:
+
+```{r}
+lecturer_data$alcohol
+```
+
+```{r}
+lecturer_data$name
+```
+
+
+
+# Daten inspizieren
+
+Es gibt verschiedene Funktionen, um sich einen Eindruck von einem Data Frame zu machen. 
+
+- ``head()`` gibt die ersten 6 Zeilen aus
+- ``ncol()`` gibt die Zahl der Variablen aus
+- ``nrow()`` gibt die Zahl der Zeilen aus
+- ``colnames()`` gibt die Namen der Spalten zurück
+- ``str()`` gibt einen Überblick über die Struktur
+
+```{r}
+str(lecturer_data)
+```
+
+Einen weiteren schönen Überblick liefert ``skim()`` aus dem Paket ``skimr``. [*Leider ist der Output in der PDF nicht so schön wie in ``R``, weil die Histogramme fehlen*] 
+
+```{r, eval=FALSE}
+install.packages("skimr", dep = TRUE)
+```
+
+```{r, eval=FALSE, echo=TRUE}
+library(skimr)
+```
+
+```{r, include=FALSE}
+library(skimr)
+```
+
+
+```{r, include=FALSE}
+skim_with(numeric = list(hist = NULL))
+```
+
+
+```{r}
+skim(lecturer_data)
+```
+
+
+
+## Missings
+
+Jedes Statistiktool geht anders mit fehlenden Werten (*Missings*) um. ``R`` stellt Missings als ``NA`` (not available) dar. Eine besondere Form davon sind unmögliche Werte ``NaN`` (not a number). Dies gibt ``R`` beispielsweise beim Dividieren durch Null aus. Mehr zu Missings können Sie unter [http://www.statmethods.net/input/missingdata.html](http://www.statmethods.net/input/missingdata.html) nachlesen.
+
+Laden wir den Lecturer Datensatz noch einmal in einer Variante mit Missings.
+
+```{r}
+lecturer_data_mi <- read_csv("data/Lecturer_Data_Missing.csv")
+```
+
+Beim Inspizieren sehen wir die Missings.
+
+```{r}
+lecturer_data_mi
+```
+
+Im Gegensatz zu vielen anderen Statistiktools ignoriert ``R`` die Missings nicht automatisch. Wir merken das zum Beispiel, wenn wir einen Mittelwert berechnen wollen.
+
+```{r}
+mean(lecturer_data$income)
+```
+
+```{r}
+mean(lecturer_data_mi$income)
+```
+
+Die Lösung besteht darin, ``R`` anzuweisen, die Missings zu ignorieren.
+
+```{r}
+mean(lecturer_data_mi$income, na.rm = TRUE)
+```
+
+
+# Daten auswählen
+
+In ``R`` führen viele Wege nach Rom. Beim Auswählen und Manipulieren von Daten sind es besonders viele. Wir nutzen hier den Weg, den das Paket ``dplyr``, das auch zum ``tidyverse`` gehört, zur Verfügung stellt. 
+
+Um ``dplyr`` dazu zu bewegen, uns mitzuteilen, welche Änderungen vorgenommen wurden, laden wir noch das kleine Zusatzpaket ``tidylog``
+
+```{r, eval = FALSE, echo = TRUE}
+install.packages("tidylog", dep = TRUE)
+library(tidylog)
+```
+
+```{r, include = FALSE}
+library(tidylog)
+```
+
+
+
+Wir nutzen zum Auswählen von Daten bevorzugt die Funktionen ``filter()`` und ``select()`` .
+
+
+
+## Fälle auswählen mit filter()
+
+Mit ``filter()`` kann man einzelne Zeilen (= Fälle) auswählen und auch direkt mehrere Bedingungen (die mit einem logischen UND geknüpft werden) angeben.
+
+```{r}
+filter(lecturer_data, job == 1, alcohol > 10)
+```
+
+Um das Ergebnis in einem neuen Objekt zu speichern, müssen wir dies explizit angeben:
+
+```{r}
+drinking_lecturers <- filter(lecturer_data, job == 1, alcohol > 10)
+drinking_lecturers
+```
+
+``filter()`` lässt sich auch auf character Variablen anwenden. 
+
+```{r}
+filter(lecturer_data, name == "Martin")
+```
+
+## Fälle mit Missings ausschließen -- drop_na()
+
+``tidyverse`` bietet uns eine komfortable Funktion, um Zeilen (= Fälle) mit fehlenden Werten auszuschließen. Die Funktion heißt ``drop_na()``. Man kann entweder jene Fälle ausschließen, die auf einer oder mehreren vorgegebenen Variablen fehlende Werte besitzt oder alle Fälle, die auf einer beliebigen Variable fehlende Werte aufweisen.
+
+```{r}
+# Fälle mit fehlenden Werten auf job und income ausschließen
+# (Zeile 9 wird gelöscht)
+drop_na(lecturer_data_mi, job, income)
+```
+
+```{r}
+# Alle Fälle ausschließen, die mindestens einen fehlenden Wert aufweisen
+# (Zeilen 6 und 9 werden gelöscht)
+drop_na(lecturer_data_mi)
+```
+
+
+
+## Variablen auswählen mit select()
+
+Einzelne Spalten (= Variablen) lassen sich mit ``select()`` auswählen. 
+
+```{r}
+select(lecturer_data, name, job, alcohol)
+```
+
+``select()`` bietet außerdem die Möglichkeit Zusatzfunktionen einzusetzen, um Variablen auszuwählen. Bspw.:
+
+- ``starts_with("bcd")``: wählt alle Variablen aus, die mit "bcd" beginnen.
+- ``ends_with("xyz")``: wählt alle Vairablen aus, die mit "xyz" enden.
+- ``contains("hjk")``: wählt alle Variablen aus, die "hjk" im Namen haben.
+- ``num_range("x", 1:3)``: wählt die Variablen x1, x2 und x3 aus.
+
+
+
+Mit ``select()`` kann man auch bestimmte Variablen ausschließen:
+
+```{r}
+select(lecturer_data, -neurotic)
+```
+
+
+## Einschub: Vergleichsoperatoren
+
+Weiter oben haben wir bereits die Rechenoperatoren (``+``, ``-``, ``*``, usw.) kennengelernt. Für die Auswahl von Fällen und Variablen benötigen wir noch die Vergleichsoperatoren:
+
+Operator | Bedeutung
+---------|-----------
+< | kleiner als
+<= | kleiner gleich
+\> | größer als
+\>= | größer gleich
+== | ist gleich
+!= | ist nicht gleich
+\| | oder
+& | und
+
+
+
+# Variablen manipulieren
+
+## Variablen umbenennen
+
+Oft wollen wir Variablen auch umbenennen. Wir testen dies Anhand eines neuen Datensatzes. ``fevs_2014_subsample`` ist eine Zufallsstichprobe aus dem Federal Employee Viewpoint Survey von 2014.
+
+
+
+```{r}
+fevs <- read_csv("data/fevs_2014_subsample.csv")
+head(fevs, n = 2) # Nur die ersten beiden Zeilen ausgeben
+```
+
+
+Wir widmen uns den drei Variablen ``q40``, ``q69`` und ``q71``.
+
+> q40: I recommend my organization as a good place to work.
+>
+> q69: Considering everything, how satisfied are you with your job?
+>
+> q71: Considering everything, how satisfied are you with your organization?
+>
+> (1 = very dissatisfied; 5 = very satisfied)
+
+
+
+Zum Umbenennen nutzen wir ``rename()`` aus ``dplyr``:
+
+```{r}
+fevs <- rename(fevs, recommend_orga = q40)
+fevs <- rename(fevs, sat_job = q69)
+fevs <- rename(fevs, sat_orga = q71)
+```
+
+Für ``rename()`` gibt man also immer zuerst den Datensatz an und dann den neuen und alten Namen mit einem ``=`` getrennt: ``rename(Datensatz, neu = alt)``
+
+
+
+## Variablen generieren
+
+In den wenigsten Fällen begnügen wir uns mit den Variablen, die ein Datensatz enthält. Wir wollen neue generieren. 
+
+Wir wollen nun die Variable ``job_satisfaction`` generieren. Diese soll die Summe der Antworten aus den Variablen ``q40``, ``q69`` und ``q71`` sein.
+
+Zum Erstellen einer neue Variable nutzen wir die Funktion ``mutate()`` aus ``dplyr``.  ``mutate()`` fügt am Ende ("rechts") des Datensatzes eine neue Variable ein. Das Ergebnis muss mit ``<-`` in einem Objekt gespeichert werden, da ``R`` ansonsten lediglich das Ergebnis (Datensatz mit neuer Variable) in der Console ausgibt.
+
+```{r}
+fevs <- mutate(fevs, job_satisfaction = recommend_orga + sat_job + sat_orga)
+fevs$job_satisfaction[1:10] # Werte 1 bis 10 ausgeben
+```
+
+Wir können auch einen Mittelwertindex bilden. Hierfür nutzen wir die Funktion ``rowMeans()``:
+
+```{r}
+M1 <- select(fevs, recommend_orga, sat_job, sat_orga) # Variablen auswählen
+job_satisfaction_mean <- rowMeans(M1, na.rm = FALSE) # Mittelwert berechnen
+fevs <- data.frame(fevs, job_satisfaction_mean) # Mittelwert in fevs einfügen
+fevs$job_satisfaction_mean[1:10] # Werte 1 bis 10 ausgeben
+```
+
+Wir können auch mit Bedingungen arbeiten. Hierfür gibt es die Funktion ``ifelse()``. Die Grundstruktur ist ``ifelse(Wenn, Dann, Sonst)``. Beispiel:
+
+```{r}
+x <- 1:6
+x
+```
+
+```{r}
+ifelse(x < 4, "A", "B")
+```
+
+Die Funktion prüft also, ob der Wert von x kleiner 4 ist und gibt A aus, wenn dies zutrifft und B, wenn nicht. In Kurzform: *Wenn x < 4, dann A, sonst B*.
+
+Die Funktion können wir in Verbindung mit ``mutate()`` auch zum Generieren von Variablen nutzen. Erstellen wir zur Illustration eine Variable, die den Wert 1 annimmt, wenn ``job_satisfaction_mean`` größer gleich 4 ist und den Wert 0 annimmt, wenn nicht. 
+
+```{r}
+fevs <- mutate(fevs, high_job_sati = ifelse(job_satisfaction_mean >= 4, 1, 0))
+fevs$high_job_sati[1:10]
+```
+
+## Einschub: Reliabilität mit Cronbachs Alpha
+
+Eben haben wir mehrere Items zu einer Variable zusammengefasst. Ob dies im vorliegenden Fall ein angemessenes Vorgehen ist, muss allerdings getestet werden. Die Items sollen schließlich "zueinander passen". Das bedeutet, die Items sollen dasselbe Konstrukt messen. Hierfür ist es erforderlich, dass die Messung reliabel ist. Wir wollen, dass jemand mit einer geringen Arbeitszufriedenheit auf unserer Variable einen niedrigen Wert hat und jemand mit einer hohen Arbeitszufriedenheit einen hohen Wert. Hierzu müssen die verwendeten Items möglichst dasselbe messen, nämlich die Arbeitszufriedenheit. Um dies zu testen, setzen wir Cronbachs Alpha ein. Dieser gibt im Wesentlichen an, wie stark eine bestimmte Menge von Items covariieren. Die Details hierzu finden sich in Section 17.8 von Field et al. (2012).
+
+Testen wir also, ob die vorher verwendeten Items geeignet sind, um ein gemeinsames Konstrukt zu messen. Hierfür verwenden wir die Funktion ``alpha()`` aus dem Paket ``psych``. Bevor wir die Funktion verwenden, müssen wir allerdings noch ein neues Objekt erstellen, dass nur die gewünschten Items enthält.
+
+```{r, eval = FALSE, echo=TRUE}
+install.packages("psych", dep = TRUE)
+#library(psych)
+```
+
+
+```{r}
+M1 <- select(fevs, recommend_orga, sat_job, sat_orga) # Variablen auswählen
+psych::alpha(M1)
+```
+
+Im Befehl setzten wir das ``psych`` mit zwei Doppelpunkten vor die Funktion ``alpha`` da es möglicherweisen zu Konflikten mit der Funktion ``alpha`` aus ``ggplot2`` (ein Teil von ``tidyverse``) kommen kann.
+
+Wir sind nun vor allem an dem Wert ``raw_alpha`` interessiert. Dieser beträgt 0,9. Allgemein wird als Daumenregel akzeptiert, dass $\alpha$ mindestens 0,7 betragen sollte. Wir können hier mit einem sehr guten Wert von 0,9 also problemlos ein gemeinsames Konstrukt bilden.
+
+Kleiner Hinweis: ``alpha`` prüft standardmäßig nicht, ob sich in der Auswahl einzelne Items befinden, die umgekehrt (reversed) codiert sind. Dies kann mit der Option ``check.keys = TRUE`` aktiviert werden. Ein kleines Beispiel:
+
+```{r}
+fevs$sat_job2 <- 6 - fevs$sat_job # sat_job "umdrehen"
+M1 <- select(fevs, recommend_orga, sat_job2, sat_orga) # Variablen auswählen
+psych::alpha(M1, check.keys = TRUE)
+```
+
+``alpha`` gibt hier direkt am Anfang eine Warnung aus und markiert das automatisch umgedrehte Item mit einem ``-`` hinter dem Namen.
+
+
+
+# Deskriptive Statistik
+
+Für das folgende Kapitel nutzen wir Daten zur Prüfungsangst von Studierenden, die von Field et al. (2012) stammen.
+
+> Code: a number indicating from which participant the scores came.
+>
+> Revise: the total hours spent revising.
+>
+> Exam: mark on the exam as a percentage.
+>
+> Anxiety: the score on the Exam Anxiety Questionnaire.
+>
+> Gender: whether the participant was male or female (stored as strings of text).
+
+
+```{r}
+exam <- read_csv("data/exam_anxiety.csv")
+exam
+```
+
+
+
+## Mittelwert und ähnliches
+
+Wir interessieren uns zunächst für den Anxiety Score und wollen ein paar Kennwerte hierzu betrachten.
+
+```{r}
+mean(exam$anxiety)
+median(exam$anxiety)
+min(exam$anxiety)
+max(exam$anxiety)
+sd(exam$anxiety)
+IQR(exam$anxiety)
+```
+
+Mithilfe der ``quantile``-Funktion lassen sich Quantile bestimmen:
+
+```{r}
+quantile(exam$anxiety, 0.5) # 50%-Quantil = Median
+quantile(exam$anxiety, c(0.25, 0.75)) # 25% und 75% Quantil
+quantile(exam$anxiety, seq(0.1, 1, by = 0.1)) #10% bis 100% Quantil
+```
+
+
+Einen schnellen Überblick über eine Reihe von Kennwerten liefert ``summary()``:
+
+```{r}
+summary(exam$anxiety)
+```
+
+Noch mehr Werte liefert ``describe()`` aus dem Paket ``psych``:
+
+```{r}
+psych::describe(exam$anxiety)
+```
+
+``describe()`` kann auch auf einen ganzen Data Frame angewandt werden:
+
+```{r}
+psych::describe(exam)
+```
+
+Das bereits erwähnte ``skim()`` aus ``skimr`` ist natürlich auch hilfreich
+
+```{r}
+skim(exam)
+```
+
+
+## Häufigkeitsverteilungen
+
+Bei nominalen oder ordinalen Variablen sind Häufigkeitstabellen aufschlussreich.
+
+```{r}
+table(exam$gender)
+```
+
+Prozentuale Anteile erhält man mit ``prop.table()``. Man muss jedoch eine Tabelle übergeben. Wir erledigen das in einem Zug:
+
+```{r}
+prop.table(table(exam$gender))
+```
+
+
+Mit ``table`` lassen sich auch Kreuztabellen erstellen. Hierzu verwenden wir einen Dummy, der angibt, ob der Anxiety Score über 90 liegt.
+
+```{r}
+exam <- mutate(exam, anxiety_high = ifelse(anxiety > 90, 1, 0))
+table(exam$anxiety_high)
+```
+
+
+Für die Kreuztabelle geben wir nun nur noch die beiden Variablen an
+
+```{r}
+table(exam$anxiety_high, exam$gender)
+```
+
+
+Noch interessanter sind hingegen oftmals die Verteilungen von metrischen Variablen auf bestimmte Gruppen. In unserem Fall zum Beispiel die Prüfungsangst getrennt nach Geschlecht. Hierfür bietet uns ``R`` die Funktion ``tapply()``. ``tapply()`` erwartet drei Argumente: Eine metrische Variable, eine kategoriale Variable und eine Funktion die angewandt werden soll.
+
+```{r}
+tapply(exam$anxiety, exam$gender, mean)
+```
+
+Der Unterschied scheint also auf den ersten Blick gering zu sein.
+
+
+Wir können einzelne Variablen natürlich auch graphisch betrachten:
+
+```{r}
+hist(exam$anxiety)
+```
+
+
+\newpage
+Wir können auch eine Kern-Dichte-Funktion hinzufügen, um abzuschätzen, wie die Verteilung als Kurve aussehen würde.
+
+```{r}
+hist(exam$anxiety, freq = FALSE)
+lines(density(exam$anxiety, from = 0, to = 100))
+
+```
+
+\newpage
+Auch der Vergleich mit einer Normalverteilung ist möglich:
+
+```{r}
+hist(exam$anxiety, freq = FALSE)
+lines(density(exam$anxiety, from = 0, to = 100))
+curve(dnorm(x, 
+            mean = mean(exam$anxiety), 
+            sd = sd(exam$anxiety)), 
+      add = TRUE, 
+      col = "red")
+```
+
+\newpage
+Auch ein Boxplot ist möglich
+
+```{r}
+boxplot(exam$anxiety)
+```
+
+Viele weitere Möglichkeiten zur Visualisierung finden Sie in Teil 4.
+
+
