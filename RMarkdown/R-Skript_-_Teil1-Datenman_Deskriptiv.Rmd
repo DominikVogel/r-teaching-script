@@ -77,7 +77,7 @@ Um mit ``R`` zu arbeiten, ist die Nutzung zweier Programme zu empfehlen: ``R`` (
 2. ``RStudio`` herunterladen (https://www.rstudio.com/products/rstudio/download/#download) und installieren 
 
 
-## R Studio konfigurieren
+## RStudio konfigurieren
 
 Es empfiehlt sich, einige Standardeinstellungen in ``R`` zu ändern. Klicken Sie hierfür auf ``Tools`` -> ``Global Option ...`` und nehmen Sie folgende Änderungen vor:
 
@@ -315,7 +315,7 @@ library(tidyverse)
 library(tidyverse)
 ```
 
-Pakete stellen in ``R`` neue Befehle (*Funktionen*) bereit. Im folgenden Abschnitt werden wir dies zum ersten Mal nutzen, wenn wir die Funktion ``read_csv()`` zum importieren von Daten verwenden. ``read_csv()`` gehört nicht zum Kern von ``R`` und lässt sich ohne das Paket ``tidyverse`` nicht nutzen.
+Pakete stellen in ``R`` neue Befehle (*Funktionen*) bereit. Im folgenden Abschnitt werden wir dies zum ersten Mal nutzen, wenn wir die Funktion ``read_csv()`` zum Importieren von Daten verwenden. ``read_csv()`` gehört nicht zum Kern von ``R`` und lässt sich ohne das Paket ``tidyverse`` nicht nutzen.
 
 
 # Daten importieren
@@ -340,7 +340,7 @@ read_dta    |  Stata-Dateien  |  .dta
 
 Wir starten mit dem "Lecturer-Datensatz" von Field et al. (2012).
 
-> "We took a random sample of five psychology lecturers from the University of Sussex [job = 1] and five psychology students [job = 0] and then measured how many friends they had, their weekly alcohol consumption (in units), their yearly income and how neurotic they were (higher score is more neurotic)" (Field et al. 2012: 86).
+> "We took a random sample of five psychology lecturers from the University of Sussex [job = 2] and five psychology students [job = 1] and then measured how many friends they had, their weekly alcohol consumption (in units), their yearly income and how neurotic they were (higher score is more neurotic)" (Field et al. 2012: 86).
 
 Wir habe die Daten vorher unter ``data/Lecturer_Data.csv`` abgespeichert. Wir können diese anschließend mit ``read_csv()`` importieren.
 
@@ -646,7 +646,7 @@ M1 <- select(fevs, recommend_orga, sat_job, sat_orga) # Variablen auswählen
 psych::alpha(M1)
 ```
 
-Im Befehl setzten wir das ``psych`` mit zwei Doppelpunkten vor die Funktion ``alpha`` da es möglicherweisen zu Konflikten mit der Funktion ``alpha`` aus ``ggplot2`` (ein Teil von ``tidyverse``) kommen kann.
+Im Befehl setzten wir das ``psych`` mit zwei Doppelpunkten vor die Funktion ``alpha``, da es möglicherweisen zu Konflikten mit der Funktion ``alpha`` aus ``ggplot2`` (ein Teil von ``tidyverse``) kommen kann.
 
 Wir sind nun vor allem an dem Wert ``raw_alpha`` interessiert. Dieser beträgt 0,9. Allgemein wird als Daumenregel akzeptiert, dass $\alpha$ mindestens 0,7 betragen sollte. Wir können hier mit einem sehr guten Wert von 0,9 also problemlos ein gemeinsames Konstrukt bilden.
 
