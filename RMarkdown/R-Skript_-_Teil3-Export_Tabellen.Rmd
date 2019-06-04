@@ -112,10 +112,10 @@ stargazer(as.data.frame(albums),
 Wir sehen, dass ``stargazer`` standardmäßig den reinen HTML-Code ausgibt. Damit können wir allerdings nicht viel anfangen. Wir leiten den Output daher mit der Option ``out="deskriptiv.html"`` in eine Datei um.
 
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 stargazer(as.data.frame(albums), 
           type = "html", 
-          out = "output/deskriptiv.html")
+          out = "deskriptiv.html")
 ```
 
 Das Resultat sieht ungefähr so aus:
@@ -128,10 +128,10 @@ Das Resultat sieht ungefähr so aus:
 
 Nachdem wir nun das Grundprinzip verstanden haben, können wir die Standardausgabe noch etwas anpassen. Wir beschränken hierfür die Zahl der Nachkommastellen auf 2, benennen die Variablen um und fügen eine Beschriftung hinzu:
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 stargazer(as.data.frame(albums), 
           type = "html", 
-          out = "output/deskriptiv2.html",
+          out = "deskriptiv2.html",
           digits = 2, # Anzahl der Nachkommastellen auf 2 beschränken
           digits.extra = 2, 
           covariate.labels = c("Werbeausgaben in Pfund", 
@@ -150,12 +150,16 @@ Das Resultat:
 
 Für eine Korrelationstabelle übergeben wir einfach das Resultat aus ``cor()`` an ``stargazer``
 
-```{r, results='hide'}
+```{r}
 cor_albums <- cor(albums, 
                   use = "pairwise.complete.obs") # wegen NAs
+```
+
+
+```{r, results='hide', eval=FALSE}
 stargazer(cor_albums, 
           type = "html", 
-          out = "output/cor.html")
+          out = "cor.html")
 ```
 
 ![](output/cor.png)
@@ -200,11 +204,11 @@ upper <- (setattr(upper, "row.names", c("(1) Werbeausgaben in Pfund",
 
 Nun können wir endlich die Tabelle erstellen:
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 # Tabelle mit stargazer erstellen
 stargazer(upper, 
           type = "html", 
-          out = "output/cor2.html", 
+          out = "cor2.html", 
           summary = FALSE, # Deskriptive Kennwerte verhindern
           digits = 2, # Anzahl der Nachkommastellen auf 2 beschränken
           digits.extra = 2, 
@@ -220,12 +224,12 @@ stargazer(upper,
 
 Für die Regressionstabelle müssen wir glücklicherweise weniger Aufwand betreiben. Wir schätzen zunächst die Modelle die wir in die Tabelle integrieren wollen und übergeben diese anschließend an ``stargazer``.
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 model_albums1 <- lm(sales ~ adverts, data = albums)
 model_albums2 <- lm(sales ~ adverts + airplay + attract, data = albums)
 stargazer(model_albums1, model_albums2,
           type = "html", 
-          out = "output/reg.html")
+          out = "reg.html")
 ```
 
 ![](output/reg.png)
@@ -233,10 +237,10 @@ stargazer(model_albums1, model_albums2,
 \newpage
 Das Ergebnis kann sich schon sehen lassen. Wir nehmen nur noch ein paar Anpassungen vor:
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 stargazer(model_albums1, model_albums2,
           type = "html", 
-          out = "output/reg2.html",
+          out = "reg2.html",
           align = TRUE, # Werte untereinander ausrichten
           title = "Regression results for explaining album sales", # Titel
           dep.var.caption = "", # "Dependent variable" ausblenden
